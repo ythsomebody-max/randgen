@@ -25,3 +25,14 @@ People uploading to stock platforms such as Adobe Stock or Shutterstock.
 ## Download
 
 Go to the **Releases** section on the right side of this page to download the latest version.
+## Keywords
+
+This project may help people searching for:
+
+adobe stock keyword tool
+stock photography keyword generator
+metadata tool for stock contributors
+shutterstock keywording workflow
+microstock upload preparation software
+batch keywording images
+stock contributor workflow helper
