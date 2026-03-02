@@ -16,12 +16,8 @@ This tool helps simplify that preparation step.
 * useful for batch image workflows
 * lightweight and simple to use
 
-## How to use
+![Uploading image.png…]()
 
-1. Download the program from Releases
-2. Run the executable
-3. Prepare your images
-4. Upload to your stock site normally
 
 ## Who it is for
 
