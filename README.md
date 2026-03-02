@@ -1,5 +1,10 @@
 # RandGen – stock upload preparation helper
 
+## ▶ Try it here
+https://ythsomebody-max.github.io/randgen/
+
+No installation required — runs directly in your browser.
+
 A small Windows tool made to reduce repetitive work before uploading images to stock websites.
 
 When uploading many images, preparing titles, keywords and organizing files often takes longer than creating the images themselves.
