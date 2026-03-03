@@ -1,9 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5840578396396045"
-     crossorigin="anonymous"></script>
-  <meta charset="UTF-8">
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>RANDGEN — AI Image Generator</title>
 <style>
@@ -209,9 +207,6 @@ textarea::placeholder{color:var(--muted);}
           📂 Select folder to enable auto-save (Chrome/Edge)<br>
           Without folder, use manual download button
         </div>
-      <div class="folder-note" style="margin-top:8px;color:#ffb347;">
-⚠ Notice: To prevent potential account limits or review flags, it is recommended to upload a maximum of 50 images per day to stock platforms.
-</div>
       </div>
     </div>
 
@@ -537,7 +532,66 @@ const subjects = [
   "a minimal ship on the horizon","abstract expedition concept",
   "a glowing location beacon","abstract tourism concept",
   "a minimal train silhouette","abstract road trip concept",
-  "a glowing time zone clock","abstract adventure begins concept"
+  "a glowing time zone clock","abstract adventure begins concept",
+
+  // 💼 비즈니스 실물 오브젝트 (~80개)
+  "a leather briefcase on a wooden desk","a fountain pen on white paper",
+  "a stack of business documents","a vintage typewriter on dark background",
+  "a pair of glasses on an open book","a calculator with financial papers",
+  "a coffee cup next to a laptop","a notebook with a pen on marble",
+  "a business card on dark surface","a gold pen on a leather notebook",
+  "a smartphone showing a blank screen","a tablet with blank screen on desk",
+  "a wristwatch on a wooden surface","a tie and shirt collar closeup",
+  "a pair of cufflinks on dark fabric","a briefcase lock detail",
+  "a whiteboard with drawn arrows","a meeting room with empty chairs",
+  "a handshake between two people","a conference table aerial view",
+  "a trophy on a shelf","a medal on dark background",
+  "a certificate with gold seal","a stamp on an envelope",
+  "a stack of coins on wood","a wallet with cards",
+  "a piggy bank on white background","a safe door with combination lock",
+  "a calculator and spreadsheet","a bar chart printed on paper",
+  "a pie chart on white background","an org chart diagram",
+  "a blank whiteboard in office","a presentation screen in dark room",
+  "a microphone on podium","a gavel on wooden desk",
+  "a globe on an executive desk","a world map on office wall",
+  "a plant on an office desk","a desk lamp on wooden table",
+  "a filing cabinet in office","a stapler on white desk",
+  "office supply flatlay on white","a clipboard with blank paper",
+  "a ruler and pencil on blueprint","a magnifying glass on documents",
+
+  // 🏪 상품/라이프스타일 오브젝트 (~60개)
+  "a luxury perfume bottle on marble","a skincare product on white background",
+  "a coffee mug with steam on dark","a wine glass with red wine",
+  "a champagne glass with bubbles","a tea cup on wooden table",
+  "a fresh green apple on white","a lemon sliced on marble",
+  "a bowl of fresh berries","a croissant on white plate",
+  "a loaf of artisan bread","a chocolate bar on dark background",
+  "a candle burning on marble","a succulent plant on white shelf",
+  "a stack of colorful books","a vinyl record on dark background",
+  "a vintage camera on wooden table","a film roll on dark background",
+  "a paintbrush and palette","colored pencils in a jar",
+  "a pair of white headphones","a keyboard on clean desk",
+  "a computer mouse on dark surface","a USB drive on dark background",
+  "a smartphone and earbuds flatlay","a charger cable on white",
+  "a smartwatch on white background","a drone on white surface",
+  "a pair of sneakers on concrete","a leather wallet on dark fabric",
+  "a sunglasses on bright background","a hat on wooden surface",
+  "a bouquet of white flowers","a single red rose on dark",
+  "a daisy on white background","a tulip on pastel background",
+  "a lavender bundle on linen","dried flowers on white paper",
+
+  // 🍽️ 음식/음료 오브젝트 (~40개)
+  "a matcha latte in ceramic cup","an espresso with crema closeup",
+  "a smoothie bowl with fruits","a stack of pancakes with syrup",
+  "a sushi roll on dark slate","a burger on wooden board",
+  "a pizza slice on dark background","a salad in white bowl",
+  "fresh vegetables on white","a knife on cutting board",
+  "a wooden spoon in olive oil","spices in small ceramic bowls",
+  "a glass of water with lemon","a bottle of olive oil on marble",
+  "a cheese board with grapes","a charcuterie spread on wood",
+  "a glass of orange juice","a smoothie in a jar",
+  "ice cream in a cone","a macaron tower on white",
+  "a slice of cake on dark plate","chocolate truffles on marble"
 ];
 
 const settings = [
@@ -848,57 +902,17 @@ async function addCard(prompt, gallery) {
   gallery.insertBefore(card, gallery.firstChild);
 
   try {
-    // Step 1: Submit job to Stable Horde
-    const submitRes = await fetch('https://stablehorde.net/api/v2/generate/async', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'apikey': '0000000000'
-      },
-      body: JSON.stringify({
-        prompt: prompt,
-        params: {
-          width: 512,
-          height: 512,
-          steps: 20,
-          cfg_scale: 7,
-          seed: String(seed),
-          sampler_name: 'k_euler'
-        },
-        models: ['stable_diffusion'],
-        r2: true
-      })
-    });
-
-    if (!submitRes.ok) throw new Error('Submit failed');
-    const { id } = await submitRes.json();
-
-    // Step 2: Poll until done
+    // Pollinations.ai FLUX - 무료 고퀄 이미지 생성
     const setLbl = (t) => {
       const el = document.getElementById('lbl'+seed);
       if (el) el.textContent = t;
     };
+    setLbl('GENERATING...');
 
-    let imgUrl = null;
-    for (let i = 0; i < 60; i++) {
-      await new Promise(r => setTimeout(r, 3000));
-      if (batchStopped) return;
+    const encodedPrompt = encodeURIComponent(prompt + ', professional stock photo, high quality, sharp, detailed, 4k');
+    const imgUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=1024&height=1024&seed=${seed}&model=flux&nologo=true&enhance=true`;
 
-      const statusRes = await fetch(`https://stablehorde.net/api/v2/generate/check/${id}`);
-      const status = await statusRes.json();
-      setLbl(`WAIT ${status.wait_time || '?'}s`);
-
-      if (status.done) {
-        const resultRes = await fetch(`https://stablehorde.net/api/v2/generate/status/${id}`);
-        const result = await resultRes.json();
-        imgUrl = result.generations?.[0]?.img;
-        break;
-      }
-    }
-
-    if (!imgUrl) throw new Error('Timeout');
-
-    // Step 3: Show image
+    // Step: Load image directly
     const wrap = document.getElementById('w'+seed);
     if (wrap) {
       const img = new Image();
@@ -908,6 +922,7 @@ async function addCard(prompt, gallery) {
         img.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;';
         wrap.appendChild(img);
         wrap.classList.add('loaded');
+        setLbl('');
 
         const saveBtn = document.getElementById('bs'+seed);
         if (saveBtn) {
@@ -994,86 +1009,5 @@ function toast(msg, err=false) {
   toastT = setTimeout(() => t.classList.remove('show'), 3000);
 }
 </script>
-<!-- ===== Startup Ad Screen ===== -->
-<div id="adOverlay" style="
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:#0c0c0c;
-z-index:99999999;
-display:flex;
-justify-content:center;
-align-items:center;
-flex-direction:column;
-color:white;
-font-family:sans-serif;
-">
-
-<h2 style="margin-bottom:10px;">Preparing AI Model...</h2>
-<div id="adTimer" style="opacity:0.7;margin-bottom:18px;">5 seconds remaining</div>
-
-<!-- Real ad will go here later -->
-<div id="realAd" style="
-width:360px;
-height:200px;
-background:#151515;
-border:1px solid #2a2a2a;
-border-radius:12px;
-display:flex;
-align-items:center;
-justify-content:center;
-color:#888;
-font-size:18px;
-">
-Loading advertisement...
-</div>
-
-<button onclick="skipAd()" style="
-margin-top:20px;
-padding:10px 20px;
-background:#3fa9ff;
-border:none;
-border-radius:8px;
-color:white;
-cursor:pointer;
-">Skip</button>
-
-</div>
-
-<script>
-let adSec = 5;
-const adTxt = document.getElementById("adTimer");
-
-const adInterval = setInterval(()=>{
-adSec--;
-adTxt.innerText = adSec + " seconds remaining";
-if(adSec<=0){
-clearInterval(adInterval);
-document.getElementById("adOverlay").style.display="none";
-}
-},1000);
-
-function skipAd(){
-clearInterval(adInterval);
-document.getElementById("adOverlay").style.display="none";
-}
-</script>
-<!-- ===== End Startup Ad Screen ===== -->
-<div style="text-align:center;margin:40px 0;font-size:13px;opacity:.7">
-<a href="privacy.html">Privacy Policy</a> |
-<a href="about.html">About</a> |
-<a href="contact.html">Contact</a>
-</div>
-<h2>About RANDGEN AI Image Generator</h2>
-
-<p>RANDGEN is a free online AI prompt generator designed to help artists, designers, and stock image creators generate unique image ideas.</p>
-
-<p>Users can instantly create random prompts for artwork, creative projects, thumbnails, and stock photography concepts.</p>
-
-<p>This website is intended for inspiration and creative assistance purposes only. No personal data is collected from visitors.</p>
-
-<p>We aim to provide a simple and accessible tool for creators worldwide.</p>
 </body>
 </html>
